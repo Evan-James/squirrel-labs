@@ -1,100 +1,159 @@
 'use client';
 
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowDown, ArrowRight, ArrowUpRight, Check, CheckCheck, Globe2, MousePointer2, Play, RotateCcw, Send, Sparkles, Workflow } from 'lucide-react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { ArrowDown, ArrowRight, Check, ClipboardCheck, Globe2, Mail, MapPin, Pause, Play, RotateCcw, Sparkles, Squirrel, Workflow } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-const modes = [
-  { name: 'Websites', icon: Globe2, caption: 'A better first impression. A clear next step.' },
-  { name: 'AI assistants', icon: Sparkles, caption: 'Helpful answers, even when you’re busy.' },
-  { name: 'Admin automation', icon: Workflow, caption: 'The same small tasks. A lot less effort.' },
+const stages = [
+  { name: 'Website', icon: Globe2, status: 'Sarah’s enquiry captured.', duration: 1500 },
+  { name: 'AI lead agent', icon: Sparkles, status: 'A helpful first response prepared.', duration: 2800 },
+  { name: 'Qualification', icon: Check, status: 'Service, location, contact and job details checked.', duration: 1800 },
+  { name: 'Enquiry handover', icon: ClipboardCheck, status: 'A clear summary ready for the business owner.', duration: 1800 },
+  { name: 'Automation', icon: Workflow, status: 'Confirmation, follow-up and owner notification complete in this example.', duration: 2000 },
+  { name: 'Result', icon: Check, status: 'Sarah is ready for a callback. Experiment complete.', duration: 0 },
 ];
-const questions = [
-  { question: 'What can you build for me?', answer: 'A website that brings in enquiries, an AI assistant that answers common questions, or an automation that handles repetitive admin. What would make your day easier?' },
-  { question: 'Can you help with repetitive admin?', answer: 'Yes. Think quote follow-ups, appointment reminders, routine data entry and enquiry summaries. Start with the task you keep doing by hand, and we can explore how to automate it.' },
-];
-const workflows = [
-  { name: 'Quote follow-up', steps: ['Read the quote details', 'Prepare a friendly follow-up', 'Set a reminder for the right day'], outcome: 'A follow-up ready to go. One less thing to remember.' },
-  { name: 'Enquiry summary', steps: ['Collect the enquiry details', 'Organise the key information', 'Prepare a clear handover'], outcome: 'The useful details in one summary. No copying them twice.' },
-  { name: 'Appointment reminder', steps: ['Read the appointment details', 'Prepare the reminder message', 'Schedule it before the appointment'], outcome: 'A reminder prepared. One less manual message.' },
-];
+
+function StageContent({ stage }: { stage: number }) {
+  if (stage === 0) return <div className="pl-capture">
+    <div className="pl-browser-bar"><span /><span /><span /><small>YOUR BUSINESS WEBSITE</small><Globe2 size={13} /></div>
+    <div className="pl-capture-body"><span className="pl-mini-label">NEW WEBSITE ENQUIRY</span><p>“Could I get a quote for a<br />switchboard replacement?”</p><span className="pl-stamp"><Check size={14} /> Enquiry captured</span></div>
+  </div>;
+  if (stage === 1) return <div className="pl-agent">
+    <div className="pl-agent-label"><Sparkles size={15} /> A HELPFUL FIRST RESPONSE</div>
+    <p>“Hi Sarah! We can help with that. Can I ask you a couple of quick questions?”</p>
+    <small>Sample AI response</small>
+  </div>;
+  if (stage === 2) return <div className="pl-qualification">
+    <div>{['Service', 'Location', 'Contact', 'Job details'].map((field, i) => <span key={field} style={{ animationDelay: `${i * 90}ms` }}>{field}<Check size={15} /></span>)}</div>
+    <span className="pl-stamp"><ClipboardCheck size={15} /> Lead qualified</span>
+  </div>;
+  if (stage === 3) return <div className="pl-handover">
+    <span className="pl-mini-label"><Check size={14} /> NEW QUALIFIED LEAD</span>
+    <div className="pl-person"><span>S</span><div><strong>Sarah</strong><p>Switchboard replacement</p><small>Richmond, VIC</small></div></div>
+    <div className="pl-handover-note"><ClipboardCheck size={14} /> One clear summary. Ready to act on.</div>
+  </div>;
+  if (stage === 4) return <div className="pl-automation">{['Confirmation sent', 'Follow-up scheduled', 'Enquiry summary prepared', 'Business owner notified'].map((label, i) => <div key={label} style={{ animationDelay: `${i * 100}ms` }}><Check size={15} /><span>{label}</span></div>)}</div>;
+  return <div className="pl-result">
+    <span className="pl-mini-label">SARAH IS READY FOR A CALLBACK.</span>
+    <h3>One enquiry.<br /><em>Zero chasing.</em></h3>
+    <p>Website <b>+</b> AI agent <b>+</b> Handover <b>+</b> Automation<br /><strong>working together.</strong></p>
+  </div>;
+}
 
 export default function InteractiveHero() {
-  const [mode, setMode] = useState(0);
-  const [websiteStyle, setWebsiteStyle] = useState(0);
-  const [enquiry, setEnquiry] = useState(false);
-  const [question, setQuestion] = useState<number | null>(null);
-  const [workflow, setWorkflow] = useState(0);
-  const [step, setStep] = useState(0);
+  const [stage, setStage] = useState(-1);
+  const [furthest, setFurthest] = useState(-1);
   const [running, setRunning] = useState(false);
-  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [inView, setInView] = useState(true);
+  const [pageVisible, setPageVisible] = useState(true);
+  const panel = useRef<HTMLDivElement>(null);
+  const finished = stage === stages.length - 1;
+  const started = stage >= 0;
 
   useEffect(() => {
-    if (!running) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setStep(3); setRunning(false); return;
-    }
-    const timer = window.setTimeout(() => {
-      setStep(current => current + 1);
-      if (step === 2) setRunning(false);
-    }, 650);
-    return () => window.clearTimeout(timer);
-  }, [running, step]);
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => { setReducedMotion(preference.matches); if (preference.matches) setRunning(false); };
+    const visibility = () => setPageVisible(!document.hidden);
+    sync(); visibility();
+    preference.addEventListener('change', sync);
+    document.addEventListener('visibilitychange', visibility);
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: .15 });
+    if (panel.current) observer.observe(panel.current);
+    return () => { preference.removeEventListener('change', sync); document.removeEventListener('visibilitychange', visibility); observer.disconnect(); };
+  }, []);
 
-  function chooseMode(index: number) {
-    setMode(index); setRunning(false); setStep(0);
+  useEffect(() => {
+    if (!running || !inView || !pageVisible || reducedMotion || stage < 0 || finished) return;
+    const timer = window.setTimeout(() => {
+      const next = stage + 1;
+      setStage(next); setFurthest(value => Math.max(value, next));
+      if (next === stages.length - 1) setRunning(false);
+    }, stages[stage].duration);
+    return () => window.clearTimeout(timer);
+  }, [stage, running, reducedMotion, inView, pageVisible, finished]);
+
+  function run() {
+    setStage(0); setFurthest(0);
+    setRunning(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (window.matchMedia('(max-width: 1023px)').matches) {
+      window.requestAnimationFrame(() => panel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }));
+    }
   }
-  function tabKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    const next = event.key === 'ArrowRight' ? (index + 1) % 3 : event.key === 'ArrowLeft' ? (index + 2) % 3 : event.key === 'Home' ? 0 : event.key === 'End' ? 2 : null;
-    if (next === null) return;
-    event.preventDefault(); chooseMode(next); tabs.current[next]?.focus();
+  function next() {
+    setRunning(false);
+    const nextStage = Math.min(stage + 1, stages.length - 1);
+    setStage(nextStage);
+    setFurthest(reached => Math.max(reached, nextStage));
+  }
+  function explore(event: MouseEvent<HTMLAnchorElement>) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    const target = document.getElementById('missed');
+    if (!target) return;
+    event.preventDefault();
+    setRunning(false);
+    window.history.pushState(null, '', '#missed');
+    target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
   }
 
   return <section className="digital-hero" id="start" aria-labelledby="hero-title">
     <div className="hero-layout">
       <div className="hero-message">
-        <div className="hero-eyebrow"><span /> SMALL BUSINESS. BIG POSSIBILITIES.</div>
-        <h1 id="hero-title">Smarter websites.<br /><em>Less busywork.</em></h1>
-        <p>Websites that open doors. AI assistants that lend a hand. Automations that take repetitive admin off your plate.</p>
-        <div className="hero-actions"><a className="action" href="#quote">Let’s build something <ArrowUpRight size={19} /></a><a className="hero-secondary" href="#lab">Explore our services <ArrowRight size={17} /></a></div>
-        <div className="hero-signature"><span className="hero-spark"><Sparkles size={18} /></span><span>Built around your business.<br /><strong>A little Squirrel Labs ingenuity.</strong></span></div>
+        <div className="hero-eyebrow"><span aria-hidden="true" /> SMALL BUSINESS. BIG POSSIBILITIES.</div>
+        <h1 id="hero-title"><span>You do the work.</span><em>We’ll keep<br className="hero-desktop-break" /> things moving.</em></h1>
+        <p>Websites, AI agents and automations that capture opportunities, follow up customers and take repetitive work off your plate.</p>
+        <div className="hero-actions">
+          <Button asChild className="action hero-primary"><a href="#quote">Get a quote <ArrowRight size={18} /></a></Button>
+          <a className="hero-secondary" href="#missed" onClick={explore}>Explore the lab <ArrowDown size={17} /></a>
+        </div>
+        <p className="hero-microcopy">Built around your business.<br /><strong>Not the other way around.</strong></p>
       </div>
 
       <div className="hero-playground" id="try-the-lab">
-        <div className="playground-note"><span>LESS “WHAT IF”. MORE “LIKE THIS”.</span><span><MousePointer2 size={14} /> Try the lab</span></div>
-        <div className="lab-console">
-          <div className="console-top"><span className="console-brand"><span>s.</span>THE POSSIBILITY LAB</span><span className="console-live"><span /> Interactive demo</span></div>
-          <div className="hero-tabs" role="tablist" aria-label="Explore what Squirrel Labs builds">
-            {modes.map(({ name, icon: Icon }, index) => <button key={name} ref={node => { tabs.current[index] = node; }} type="button" role="tab" id={`hero-tab-${index}`} aria-selected={mode === index} aria-controls="hero-panel" tabIndex={mode === index ? 0 : -1} onClick={() => chooseMode(index)} onKeyDown={event => tabKey(event, index)}><Icon size={17} /><span>{name}</span></button>)}
+        <div className="pl-introduction"><span>Less “what if.”</span><strong>More “watch this.”</strong><span className="pl-edition" aria-hidden="true">EXPERIMENT / 001</span></div>
+        <div ref={panel} className={`possibility-lab ${started ? 'pl-started' : ''} ${running && inView && pageVisible ? 'pl-running' : ''} ${finished ? 'pl-finished' : ''}`}>
+          <div className="pl-topline"><span className="pl-online"><i aria-hidden="true" /> LAB ONLINE</span><span className="pl-serial" aria-hidden="true">SL—001 <Squirrel size={18} strokeWidth={1.5} /></span></div>
+          <div className="pl-heading"><h2>The possibility lab</h2><p>See what happens when an enquiry<br className="pl-wide-only" /> enters a smarter business.</p></div>
+
+          <div className="pl-enquiry">
+            <div className="pl-enquiry-meta"><span><Mail size={13} /> NEW ENQUIRY</span><time>10:42 AM</time></div>
+            <div className="pl-person"><span>S</span><div><strong>Sarah</strong><p>Switchboard replacement</p><small><MapPin size={11} /> Richmond, VIC</small></div></div>
+            <span className="pl-entry-port" aria-hidden="true"><ArrowRight size={14} /></span>
           </div>
-          <div className="hero-demo-panel" id="hero-panel" role="tabpanel" aria-labelledby={`hero-tab-${mode}`} tabIndex={0}>
-            <div className="demo-caption"><span>0{mode + 1} / {modes[mode].name.toUpperCase()}</span><p>{modes[mode].caption}</p></div>
-            {mode === 0 && <div className="website-demo">
-              <div className="website-style" role="group" aria-label="Choose a website example">{['Business website', 'Landing page'].map((name, index) => <button type="button" key={name} aria-pressed={websiteStyle === index} onClick={() => { setWebsiteStyle(index); setEnquiry(false); }}>{name}</button>)}</div>
-              <div className={`mini-browser ${websiteStyle === 1 ? 'landing-preview' : ''}`}>
-                <div className="mini-browser-bar"><i /><i /><i /><span>your-business.com.au</span><Globe2 size={12} /></div>
-                <div className="mini-site"><div className="mini-site-nav"><strong>{websiteStyle === 0 ? 'YOUR BUSINESS' : 'YOUR NEXT BIG IDEA'}</strong><span>Made for you <Sparkles size={12} /></span></div>
-                  {enquiry ? <div className="mini-enquiry" role="status"><span><CheckCheck size={26} /></span><h3>A new conversation starts.</h3><p>Example enquiry captured.<br />A clear summary, ready for your reply.</p><button type="button" onClick={() => setEnquiry(false)}><RotateCcw size={13} /> Back to the website</button></div> : <div className="mini-site-content"><span className="mini-label">{websiteStyle === 0 ? 'GOOD AT WHAT YOU DO.' : 'ONE IDEA. ONE CLEAR NEXT STEP.'}</span><h3>{websiteStyle === 0 ? <>Make a great<br /><em>first impression.</em></> : <>Turn a little interest<br /><em>into a conversation.</em></>}</h3><p>{websiteStyle === 0 ? 'Give your next customer a reason to get in touch.' : 'A focused page built around your next offer.'}</p><button type="button" onClick={() => setEnquiry(true)}>Try an enquiry <ArrowUpRight size={14} /></button><div className="mini-orbit" aria-hidden="true"><span /><span /><Sparkles /></div></div>}
-                </div>
-              </div>
-              <div className="demo-hint"><MousePointer2 size={14} /> Change the page. Try the enquiry button.</div>
-            </div>}
-            {mode === 1 && <div className="assistant-demo">
-              <div className="assistant-identity"><span><Sparkles size={19} /></span><div><strong>Your helpful assistant</strong><small>Business knowledge. A human touch.</small></div></div>
-              <div className="assistant-conversation" aria-live="polite"><p className="assistant-bubble">Hello! What would you like to make easier?</p>{question !== null && <><p className="visitor-bubble">{questions[question].question}</p><p className="assistant-bubble assistant-answer">{questions[question].answer}</p></>}</div>
-              <div className="assistant-prompts"><span>TRY A QUESTION</span>{questions.map(({ question: text }, index) => <button type="button" aria-pressed={question === index} key={text} onClick={() => setQuestion(index)}>{text}<Send size={14} /></button>)}</div>
-            </div>}
-            {mode === 2 && <div className="automation-demo">
-              <label htmlFor="hero-task">What keeps ending up on your to-do list?</label><select id="hero-task" value={workflow} onChange={event => { setWorkflow(Number(event.target.value)); setRunning(false); setStep(0); }}>{workflows.map((task, index) => <option value={index} key={task.name}>{task.name}</option>)}</select>
-              <ol className="automation-steps">{workflows[workflow].steps.map((label, index) => <li key={label} className={step > index ? 'step-done' : running && step === index ? 'step-active' : ''}><span>{step > index ? <Check size={16} /> : `0${index + 1}`}</span><span>{label}</span>{step > index && <small>Ready</small>}</li>)}</ol>
-              <button className="run-workflow" type="button" disabled={running} onClick={() => { setStep(0); setRunning(true); }}>{running ? <Workflow size={17} /> : step === 3 ? <RotateCcw size={17} /> : <Play size={17} />}{running ? 'Working through the steps…' : step === 3 ? 'Run it again' : 'Run this example'}<ArrowRight size={17} /></button>
-              <p className="workflow-outcome" role="status">{step === 3 ? workflows[workflow].outcome : 'Watch the routine steps take care of themselves.'}</p>
-            </div>}
+
+          <div className="pl-controls">
+            <div className={`pl-control-row ${started ? 'pl-has-started' : ''}`}>
+              {started && !reducedMotion && <Button key="pause" variant="ghost" className="pl-pause" aria-disabled={finished} onClick={() => { if (!finished) setRunning(value => !value); }}>{finished ? <Check size={15} /> : running ? <Pause size={15} /> : <Play size={15} />}{finished ? 'Complete' : running ? 'Pause' : 'Play'}</Button>}
+              <Button key="advance" variant={started ? 'ghost' : 'default'} className={!started ? 'action pl-run-button' : finished ? 'pl-replay' : 'pl-next'} onClick={!started || finished ? run : next}>{!started ? <>Run the experiment <ArrowRight size={18} /></> : finished ? <><RotateCcw size={16} /> Replay experiment</> : <>Next step <ArrowRight size={16} /></>}</Button>
+            </div>
+            {finished && <a className="pl-see-how" href="#missed" onClick={explore}>See how it works <ArrowDown size={16} /></a>}
+            <p className="pl-control-hint">{!started ? 'Six small steps. One better way to work.' : finished ? 'Example complete. Your business shapes the real workflow.' : reducedMotion ? 'Step through at your own pace. Motion is reduced.' : running ? 'Follow the signal. Pause or step ahead anytime.' : 'Paused. Take a closer look, or continue.'}</p>
           </div>
-          <div className="console-foot"><span><span /> {mode === 0 ? 'DESIGNED TO START CONVERSATIONS' : mode === 1 ? 'A HELPFUL FIRST RESPONSE' : 'LESS COPYING. LESS CHASING.'}</span><span>SL / 001</span></div>
+
+          {!started ? <div className="pl-ready">
+            <div className="pl-intake" aria-hidden="true"><span /><ArrowDown size={16} /><span /></div>
+            <div className="pl-ready-modules" aria-hidden="true"><span><Globe2 size={22} /><small>WEBSITE</small></span><i /><span><Sparkles size={22} /><small>AI AGENT</small></span><i /><span><Workflow size={22} /><small>AUTOMATION</small></span></div>
+            <div className="pl-ready-message"><span>One opportunity.</span><strong>Let’s put it to work.</strong></div>
+          </div> : <div className="pl-workflow" aria-label="Enquiry experiment">
+            <div className="pl-traveller" aria-hidden="true"><Mail size={12} /><span>Sarah’s enquiry</span><span>10:42 AM</span></div>
+            <ol className="pl-stages">
+              {stages.map(({ name, icon: Icon }, index) => {
+                const current = stage === index;
+                const complete = index < furthest || furthest === stages.length - 1;
+                return <li key={name} className={`pl-stage ${current ? 'pl-current' : ''} ${complete ? 'pl-complete' : ''}`} aria-current={current ? 'step' : undefined}>
+                  <span className="pl-stage-marker" aria-hidden="true">{complete ? <Check size={13} /> : String(index + 1).padStart(2, '0')}</span>
+                  <button type="button" className="pl-stage-label" aria-expanded={current} aria-controls={`pl-stage-detail-${index}`} aria-label={`${name}, ${current ? 'current stage' : complete ? 'completed, review stage' : index <= furthest ? 'review stage' : 'upcoming stage'}`} disabled={index > furthest} onClick={() => { setStage(index); setRunning(false); }}><Icon size={14} /><span>{name}</span><small>{current ? `0${index + 1} / 06` : complete ? 'Done' : 'Waiting'}</small></button>
+                  <div id={`pl-stage-detail-${index}`} hidden={!current}>{current && <div className="pl-active-detail"><StageContent stage={index} /></div>}</div>
+                </li>;
+              })}
+            </ol>
+          </div>}
+
+          <div className="pl-result-ticket" aria-hidden="true"><span><Check size={14} /> QUALIFIED</span><strong>Ready for callback</strong><small>Sarah’s next step is clear.</small></div>
+          <p className="pl-announcement" role="status" aria-atomic="true">{started ? `Stage ${stage + 1} of 6. ${stages[stage].name}. ${stages[stage].status}` : 'The experiment is ready. Select Run the experiment to begin.'}</p>
         </div>
-        <p className="hero-demo-disclosure">Interactive examples. Sample replies and outcomes; no messages are sent.</p>
+        <p className="hero-demo-disclosure">Illustrative demo. Sarah is fictional. No messages are sent<br className="pl-wide-only" /> and no external actions are performed.</p>
       </div>
     </div>
-    <div className="hero-story-link"><a href="#missed"><span className="scroll-circle"><ArrowDown size={18} /></span><span>See what this could change<br /><strong>A small business story</strong></span></a><span>AI ASSISTANTS <i /> ADMIN AUTOMATION <i /> WEBSITES</span></div>
   </section>;
 }
