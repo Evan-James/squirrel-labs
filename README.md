@@ -16,7 +16,7 @@ For local Windows development, open PowerShell in this directory and run `node s
 ## Enquiries
 `POST /api/quote` validates form data and saves it to the Sites D1 `DB` binding. UUID request keys make retries idempotent. There is no public endpoint exposing enquiries. Generate schema changes with `npm run db:generate`; Sites applies the committed migrations during deployment.
 
-Email/CRM routing is not connected yet. The owner must provide the destination and service configuration before public launch. Privacy/terms content is introductory and needs the business's final details. No social destinations were supplied, so no invented profiles are linked.
+Email notifications are not connected yet. The owner must provide the destination and service configuration before public launch. Privacy/terms content is introductory and needs the business's final details. No social destinations were supplied, so no invented profiles are linked.
 
 ## Artwork
 Eight original assets were created with built-in GPT Image, starting from a master squirrel design. Exact prompts and reference relationships are in `design/prompt-manifest.json`. Optimized responsive WebP assets are in `public/images`. Original PNGs are preserved in the sibling `squirrel-labs-artwork` folder.
