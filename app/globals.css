@@ -4,5 +4,6 @@
 @import './mobile.css';
 @import './desktop.css';
 @import './hero.css';
+@import './showcase.css';
 @import './hazel-chat.css';
 @theme inline{--color-background:var(--paper);--color-foreground:var(--ink);--color-primary:var(--purple);--color-primary-foreground:#fff;--color-secondary:#e8e0f0;--color-secondary-foreground:var(--plum);--color-muted:#eee8df;--color-muted-foreground:#6d666e;--color-accent:#ece4f3;--color-accent-foreground:var(--plum);--color-border:#d9d0c4;--color-input:#d9d0c4;--color-ring:var(--purple);--color-destructive:#a52d2d;--radius-md:8px;--radius-lg:14px;--font-sans:'Satoshi',Arial,sans-serif}
