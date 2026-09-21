@@ -21,7 +21,8 @@
 }
 .hazel-launcher:hover { background: #493058; box-shadow: 0 7px 25px #2d1d3b38; }
 .hazel-launcher small { display: none; font-size: .65rem; font-weight: 400; color: #ded0e7; margin-top: .18rem; }
-.hazel-launcher-avatar { width: 40px; height: 40px; display: grid; place-items: center; background: #dcc7f1; color: var(--plum); border-radius: 50%; }
+.hazel-launcher-avatar { width: 40px; height: 40px; display: grid; place-items: center; overflow: hidden; background: #eee5f5; border: 1px solid #cdb6dc; border-radius: 50%; }
+.hazel-launcher-avatar img, .hazel-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; }
 .hazel-launcher-dot { width: 6px; height: 6px; border-radius: 50%; background: #dcb271; margin-left: .25rem; }
 .hazel-dialog {
   position: fixed !important;
@@ -55,7 +56,7 @@
 .hazel-dialog button, .hazel-dialog a { -webkit-tap-highlight-color: transparent; }
 .hazel-dialog :focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
 .hazel-header { display: flex; align-items: center; gap: .7rem; padding: 1rem .75rem 1rem 1rem; background: #eee5f5; border-bottom: 1px solid #dfd2e7; }
-.hazel-avatar { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; border-radius: 50%; background: #dfc7f1; color: var(--plum); }
+.hazel-avatar { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; overflow: hidden; border: 1px solid #cdb6dc; border-radius: 50%; background: #eee5f5; }
 .hazel-heading { flex: 1; min-width: 0; }
 .hazel-heading [data-slot='dialog-title'] { font-size: 1.35rem; letter-spacing: -.035em; line-height: 1.2; color: var(--plum); }
 .hazel-heading [data-slot='dialog-description'] { margin-top: .25rem; font-size: .73rem; line-height: 1.4; color: #6c5977; }

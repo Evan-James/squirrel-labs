@@ -116,7 +116,9 @@ export default function HazelChat() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button className="hazel-launcher" type="button" aria-label="Ask Hazel, Squirrel Labs’ chatbot">
-          <span className="hazel-launcher-avatar" aria-hidden="true"><Squirrel size={27} strokeWidth={1.6} /></span>
+          <span className="hazel-launcher-avatar" aria-hidden="true">
+            <img src="/images/hazel-avatar.webp" alt="" width="320" height="320" />
+          </span>
           <span>Ask Hazel<small>A little help, right here.</small></span>
           <span className="hazel-launcher-dot" aria-hidden="true" />
         </button>
@@ -127,7 +129,9 @@ export default function HazelChat() {
         onOpenAutoFocus={event => { event.preventDefault(); inputRef.current?.focus({ preventScroll: true }); }}
       >
         <div className="hazel-header">
-          <div className="hazel-avatar" aria-hidden="true"><Squirrel size={31} strokeWidth={1.6} /></div>
+          <div className="hazel-avatar" aria-hidden="true">
+            <img src="/images/hazel-avatar.webp" alt="" width="320" height="320" />
+          </div>
           <div className="hazel-heading">
             <DialogTitle>Meet Hazel.</DialogTitle>
             <DialogDescription>Your Squirrel Labs knowledge guide</DialogDescription>
