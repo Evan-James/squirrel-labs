@@ -47,7 +47,9 @@
   border-radius: 20px 20px 0 0 !important;
   background: var(--paper) !important;
   color: var(--ink);
-  translate: none !important;
+  --tw-translate-x: 0px !important;
+  --tw-translate-y: 0px !important;
+  translate: 0 0 !important;
   transform: none !important;
   animation: none !important;
   box-shadow: 0 20px 80px #2d1d3b35;
