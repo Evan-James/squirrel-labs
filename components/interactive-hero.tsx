@@ -98,8 +98,8 @@ export default function InteractiveHero() {
 
   return <section className="digital-hero" id="start" aria-labelledby="hero-title">
     <picture className="hero-photo" aria-hidden="true">
-      <source media="(min-width: 1440px)" srcSet="/images/hero-automation.webp" />
-      <source media="(min-width: 1024px)" srcSet="/images/hero-automation-small.webp" />
+      <source media="(min-width: 1440px)" srcSet="/images/hero-ai-workspace.webp" />
+      <source media="(min-width: 1024px)" srcSet="/images/hero-ai-workspace-small.webp" />
       <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" width="1536" height="1024" loading="eager" fetchPriority="high" />
     </picture>
     <div className="hero-layout">
