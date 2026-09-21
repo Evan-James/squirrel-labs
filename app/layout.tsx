@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import HazelChat from "@/components/hazel-chat";
 
 export const metadata: Metadata = {
   title: "Squirrel Labs — Less busywork. More business.",
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-AU">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">{children}<HazelChat /></body>
     </html>
   );
 }

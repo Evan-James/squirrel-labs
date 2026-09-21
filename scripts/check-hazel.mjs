@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { parseKnowledge, knowledgeReply } from '../lib/hazel-knowledge.ts';
+import { generateHazelAnswer } from '../lib/hazel-ai.ts';
+
+const knowledge = parseKnowledge(readFileSync(new URL('../content/hazel-knowledge.md', import.meta.url), 'utf8'));
+const ask = content => knowledgeReply(knowledge, [{ role: 'user', content }]);
+assert.match(ask('How much is a website?').answer, /no published fixed price/i);
+assert.match(ask('Do you do CRM integration?').answer, /does not offer CRM setup or CRM integration/);
+assert.match(ask('Can you automate my admin?').answer, /routine data entry/);
+assert.match(ask('What is your name?').answer, /Hazel/);
+assert.match(ask('Can you build a WordPress website?').answer, /have not been confirmed/);
+assert.match(ask('Can you automate quote reminders?').answer, /We automate repetitive admin/);
+assert.match(ask('Can you build an AI customer support chatbot?').answer, /We build AI assistants/);
+assert.match(ask('What is your email address?').answer, /direct business email/);
+assert.match(ask('Can I talk to a human instead of this chatbot?').answer, /Use the quote form/);
+assert.equal(ask('Explain photosynthesis').mode, 'fallback');
+assert.equal(ask('this thing').mode, 'fallback', 'Do not match hi inside this');
+assert.match(knowledgeReply(knowledge, [{ role: 'user', content: 'Tell me about websites' }, { role: 'assistant', content: 'Anything invented here is ignored.' }, { role: 'user', content: 'Tell me more about that' }]).answer, /business websites/);
+const extra = parseKnowledge('## Test topic\nKeywords: unique test fact\nLink: #quote | Ask us\n\nAn owner supplied answer.');
+assert.equal(knowledgeReply(extra, [{ role: 'user', content: 'unique test fact' }]).answer, 'An owner supplied answer.', 'New Markdown topics are picked up without code edits');
+assert.throws(() => parseKnowledge('## Invalid\nKeywords: test\nLink: javascript:alert(1)\n\nBad link'));
+let payload;
+const mock = async (url, options) => {
+  assert.equal(url, 'https://api.openai.com/v1/responses');
+  payload = JSON.parse(options.body);
+  assert.equal(options.headers.Authorization, 'Bearer fake-test-key');
+  return new Response(JSON.stringify({ status: 'completed', output: [{ type: 'reasoning' }, { type: 'message', content: [{ type: 'output_text', text: 'An approved answer.' }] }] }));
+};
+assert.equal(await generateHazelAnswer('fake-test-key', 'gpt-4.1-mini', [{ role: 'user', content: 'What do you build?' }], knowledge.slice(0, 1), mock), 'An approved answer.');
+assert.equal(payload.store, false);
+assert.equal(payload.max_output_tokens, 350);
+assert.match(payload.instructions, /CRM setup and CRM integration are not offered/);
+await assert.rejects(generateHazelAnswer('fake-test-key', 'gpt-4.1-mini', [], [], async () => new Response('', { status: 429 })));
+await assert.rejects(generateHazelAnswer('fake-test-key', 'gpt-4.1-mini', [], [], async () => new Response(JSON.stringify({ status: 'incomplete', output: [] }))));
+console.log('PASS: knowledge editing, topic matching, scope boundaries, follow-ups, safe links, AI request/response contract and provider errors.');

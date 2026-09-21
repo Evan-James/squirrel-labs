@@ -1,0 +1,120 @@
+.hazel-launcher {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  min-height: 58px;
+  padding: .55rem 1rem .55rem .55rem;
+  border: 1px solid #ffffff2b;
+  border-radius: 100px;
+  background: var(--plum);
+  color: var(--paper);
+  box-shadow: 0 6px 22px #2d1d3b28;
+  font-size: .875rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: left;
+  transition: background .15s, box-shadow .15s;
+}
+.hazel-launcher:hover { background: #493058; box-shadow: 0 7px 25px #2d1d3b38; }
+.hazel-launcher small { display: none; font-size: .65rem; font-weight: 400; color: #ded0e7; margin-top: .18rem; }
+.hazel-launcher-avatar { width: 40px; height: 40px; display: grid; place-items: center; background: #dcc7f1; color: var(--plum); border-radius: 50%; }
+.hazel-launcher-dot { width: 6px; height: 6px; border-radius: 50%; background: #dcb271; margin-left: .25rem; }
+.hazel-dialog {
+  position: fixed !important;
+  top: auto !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  z-index: 70 !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: min(94dvh, 780px);
+  max-height: 94dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  border: 1px solid #d9ccdf !important;
+  border-bottom: 0 !important;
+  border-radius: 20px 20px 0 0 !important;
+  background: var(--paper) !important;
+  color: var(--ink);
+  translate: none !important;
+  transform: none !important;
+  animation: none !important;
+  box-shadow: 0 20px 80px #2d1d3b35;
+  font-family: 'Satoshi', Arial, sans-serif;
+}
+.hazel-dialog button, .hazel-dialog a { -webkit-tap-highlight-color: transparent; }
+.hazel-dialog :focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.hazel-header { display: flex; align-items: center; gap: .7rem; padding: 1rem .75rem 1rem 1rem; background: #eee5f5; border-bottom: 1px solid #dfd2e7; }
+.hazel-avatar { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; border-radius: 50%; background: #dfc7f1; color: var(--plum); }
+.hazel-heading { flex: 1; min-width: 0; }
+.hazel-heading [data-slot='dialog-title'] { font-size: 1.35rem; letter-spacing: -.035em; line-height: 1.2; color: var(--plum); }
+.hazel-heading [data-slot='dialog-description'] { margin-top: .25rem; font-size: .73rem; line-height: 1.4; color: #6c5977; }
+.hazel-header-actions { display: flex; flex-shrink: 0; gap: 0; }
+.hazel-icon-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #675172; }
+.hazel-icon-button:hover { background: #e1d3ea; color: var(--plum); }
+.hazel-log { min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 1.3rem 1rem 1rem; scrollbar-width: thin; scrollbar-color: #d5c2df transparent; }
+.hazel-log:focus-visible { outline-offset: -4px; }
+.hazel-welcome { margin: .1rem 0 1.2rem; }
+.hazel-welcome-eyebrow { display: flex; align-items: center; gap: .4rem; font-size: .6rem; font-weight: 700; letter-spacing: .08em; color: #826398; }
+.hazel-welcome > p:first-of-type { font-size: 1.6rem; font-weight: 700; line-height: 1.3; letter-spacing: -.04em; color: var(--plum); margin-top: .8rem; }
+.hazel-welcome > p:nth-of-type(2) { font-size: .94rem; line-height: 1.65; margin-top: .5rem; color: #63576a; }
+.hazel-guide-note { display: flex; align-items: center; gap: .4rem; margin-top: .8rem; color: #76647c; font-size: .71rem; line-height: 1.5; }
+.hazel-starters { display: grid; gap: .5rem; margin-bottom: .35rem; }
+.hazel-starters button { display: flex; align-items: center; justify-content: space-between; gap: .7rem; min-height: 46px; width: 100%; padding: .65rem .8rem; background: #f4edf8; border: 1px solid #e4d6ed; border-radius: 9px; color: #65448a; text-align: left; font-size: .82rem; line-height: 1.45; }
+.hazel-starters button:hover { background: #ebe0f3; border-color: #c8b0da; }
+.hazel-starters svg { flex-shrink: 0; }
+.hazel-message { max-width: 95%; margin: 1rem 0; padding: .85rem .95rem; border-radius: 13px 13px 13px 3px; border: 1px solid #e5dae9; background: #f3edf7; overflow-wrap: anywhere; }
+.hazel-message-user { margin-left: auto; background: var(--plum); border-color: var(--plum); border-radius: 13px 13px 3px 13px; color: #fffaf3; }
+.hazel-message-author { display: block; margin-bottom: .25rem; font-size: .67rem; font-weight: 700; letter-spacing: .02em; color: #765386; }
+.hazel-message-user .hazel-message-author { color: #d1bbdf; }
+.hazel-message p { white-space: pre-wrap; font-size: .92rem; line-height: 1.65; margin: 0; }
+.hazel-answer-mode { display: flex; align-items: center; gap: .35rem; font-size: .61rem; line-height: 1.5; color: #75627e; margin-top: .65rem; }
+.hazel-answer-mode svg { flex-shrink: 0; }
+.hazel-sources { display: flex; flex-wrap: wrap; gap: .35rem .75rem; margin-top: .45rem; }
+.hazel-sources a { display: inline-flex; align-items: center; gap: .25rem; min-height: 44px; font-size: .78rem; font-weight: 700; color: var(--purple); text-decoration: underline; text-decoration-color: #b99ece; text-underline-offset: 3px; }
+.hazel-sources a:hover { color: var(--plum); }
+.hazel-thinking { display: flex; align-items: center; gap: .65rem; font-size: .78rem; line-height: 1.6; color: #80688b; padding: .45rem .2rem .7rem; }
+.hazel-thinking > span { display: inline-flex; gap: 3px; }
+.hazel-thinking i { display: block; width: 5px; height: 5px; background: #aa84c7; border-radius: 50%; animation: hazel-pulse 1.2s ease-in-out infinite; }
+.hazel-thinking i:nth-child(2) { animation-delay: .16s; }
+.hazel-thinking i:nth-child(3) { animation-delay: .32s; }
+.hazel-error { padding: .85rem; border: 1px solid #e8cfb7; border-radius: 10px; background: #fff3e5; color: #885224; font-size: .85rem; }
+.hazel-error p { font-size: inherit; line-height: 1.6; }
+.hazel-error button { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; font-size: .85rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.hazel-composer { padding: .85rem 1rem max(.9rem, env(safe-area-inset-bottom)); border-top: 1px solid #e8dfea; background: var(--paper); }
+.hazel-input-form { display: flex; align-items: flex-end; gap: .45rem; padding: .4rem; border: 1px solid #cbb7d8; border-radius: 13px; background: white; }
+.hazel-input-form:focus-within { border-color: var(--purple); box-shadow: 0 0 0 2px #6d3fc014; }
+.hazel-input-form textarea { width: 100%; min-width: 0; min-height: 44px; max-height: 110px; resize: none; border: 0; outline: none !important; background: transparent; color: var(--ink); font: 400 16px/1.5 'Satoshi', Arial, sans-serif; padding: .65rem .45rem; field-sizing: content; }
+.hazel-input-form textarea::placeholder { color: #8b7a93; font-size: .85rem; }
+.hazel-send { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; border: 0; border-radius: 9px; background: var(--purple); color: white; }
+.hazel-send:hover:not(:disabled) { background: #58339c; }
+.hazel-send:disabled { cursor: default; color: #a898b0; background: #eee6f3; }
+.hazel-character-count { text-align: right; font-size: .65rem; color: #826b8e; margin-top: .3rem; }
+.hazel-privacy { color: #786681; font-size: .7rem; line-height: 1.5; margin-top: .65rem; }
+@keyframes hazel-pulse { 0%, 60%, 100% { opacity: .4; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+@media (min-width: 480px) {
+  .hazel-launcher { right: 1.5rem; bottom: 1.5rem; padding-right: 1.1rem; }
+  .hazel-launcher small { display: block; }
+  .hazel-dialog { right: 1.5rem !important; bottom: 1.5rem !important; left: auto !important; width: min(410px, calc(100vw - 3rem)) !important; height: min(700px, calc(100dvh - 3rem)); max-height: calc(100dvh - 3rem) !important; border: 1px solid #d9ccdf !important; border-radius: 19px !important; }
+  .hazel-header { padding: 1rem; }
+  .hazel-log { padding: 1.4rem 1.25rem 1rem; }
+  .hazel-composer { padding: .9rem 1.1rem 1rem; }
+}
+@media (max-width: 359px) {
+  .hazel-header { gap: .4rem; padding-inline: .7rem .35rem; }
+  .hazel-avatar { width: 39px; height: 39px; flex-basis: 39px; }
+  .hazel-heading [data-slot='dialog-title'] { font-size: 1.2rem; }
+  .hazel-heading [data-slot='dialog-description'] { font-size: .65rem; max-width: 130px; }
+  .hazel-welcome-eyebrow { letter-spacing: .04em; font-size: .57rem; }
+}
+@media (prefers-reduced-motion: reduce) { .hazel-launcher { transition: none; } .hazel-thinking i { animation: none; } }

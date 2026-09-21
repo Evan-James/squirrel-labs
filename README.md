@@ -2,6 +2,9 @@
 
 An original eleven-chapter illustrated story: the lead that almost got away.
 
+## Hazel chatbot
+Hazel is the site's squirrel guide. Edit `content/hazel-knowledge.md` to add approved answers and customer keywords. See `docs/HAZEL.md` for the editing format, publication steps and optional AI secret configuration. Hazel works immediately from the knowledge base without an API key. No chat messages are stored in the site's database.
+
 ## Development
 React, TypeScript, Tailwind, GSAP/ScrollTrigger and Next.js-compatible Vinext. Node 22.13+.
 
